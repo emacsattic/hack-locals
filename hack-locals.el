@@ -4,7 +4,7 @@
 ;;; Copyright (C) 1993 Noah S. Friedman
 
 ;;; Maintainer: Noah Friedman <friedman@prep.ai.mit.edu>
-;;; $Id: hack-locals.el,v 1.4 1995/01/10 20:59:55 friedman Exp $
+;;; $Id: hack-locals.el,v 1.5 2010/02/09 08:14:19 friedman Exp $
 
 ;;; This program is free software; you can redistribute it and/or modify
 ;;; it under the terms of the GNU General Public License as published by
@@ -17,9 +17,7 @@
 ;;; GNU General Public License for more details.
 ;;;
 ;;; You should have received a copy of the GNU General Public License
-;;; along with this program; if not, you can either send email to this
-;;; program's author (see below) or write to: The Free Software Foundation,
-;;; Inc.; 675 Massachusetts Avenue; Cambridge, MA 02139, USA.
+;;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Portions of this program are derived from GNU Emacs 19.20 files.el.
 
@@ -28,7 +26,7 @@
   "*Control use of local-variables lists in files you visit.
 The value can be `t', `nil' or something else.
 A value of `t' means local-variables lists are obeyed;
-`nil' means they are ignored; 
+`nil' means they are ignored;
 `query-other' means query only if file being visited isn't owned by the user;
 anything else means query.
 
@@ -41,7 +39,7 @@ This feature has been modified by hack-locals.el.")
   "*Control processing of the \"variable\" `eval' in a file's local variables.
 The value can be `t', `nil' or something else.
 A value of `t' means obey `eval' variables;
-`nil' means ignore them; 
+`nil' means ignore them;
 `query-other' means query only if file being visited isn't owned by the user;
 anything else means query.
 
@@ -92,7 +90,7 @@ set-auto-mode should already have handled that."
 		 (setq result (cons (cons key val) result))
 		 (skip-chars-forward " \t;")))
 	     (setq result (nreverse result))))
-      
+
       (if (and result
                (let ((buffer-file-name (if (boundp 'buffer-file-truename)
                                            buffer-file-truename
@@ -100,13 +98,15 @@ set-auto-mode should already have handled that."
                  (or (eq enable-local-variables t)
                      (and (eq enable-local-variables 'query-other)
                           buffer-file-name
-                          (eq (nth 2 (file-attributes buffer-file-name)) 
+                          (eq (nth 2 (file-attributes buffer-file-name))
                               (user-uid)))
                      (and enable-local-variables
                           (save-window-excursion
                             (switch-to-buffer (current-buffer))
                             (y-or-n-p (format "Set local variables as specified in -*- line of %s? "
-                                              (file-name-nondirectory buffer-file-name))))))))
+                                              (if buffer-file-name
+                                                  (file-name-nondirectory buffer-file-name)
+                                                (buffer-name)))))))))
 	  (while result
 	    (let ((key (car (car result)))
 		  (val (cdr (car result))))
@@ -130,7 +130,7 @@ set-auto-mode should already have handled that."
 	       (or (eq enable-local-variables t)
                    (and (eq enable-local-variables 'query-other)
                         buffer-file-name
-                        (eq (nth 2 (file-attributes buffer-file-name)) 
+                        (eq (nth 2 (file-attributes buffer-file-name))
                             (user-uid)))
 		   (and enable-local-variables
 			(save-window-excursion
@@ -140,7 +140,7 @@ set-auto-mode should already have handled that."
 			    (set-window-start (selected-window) (point)))
 			  (y-or-n-p (format "Set local variables as specified at end of %s? "
  					    (if buffer-file-name
- 						(file-name-nondirectory 
+ 						(file-name-nondirectory
  						 buffer-file-name)
  					      (concat "buffer "
  						      (buffer-name))))))))))
@@ -214,7 +214,7 @@ set-auto-mode should already have handled that."
 		  (or (eq enable-local-eval t)
                       (and (eq enable-local-eval 'query-other)
                            buffer-file-name
-                           (eq (nth 2 (file-attributes buffer-file-name)) 
+                           (eq (nth 2 (file-attributes buffer-file-name))
                                (user-uid)))
 		      (and enable-local-eval
 			   (save-window-excursion
